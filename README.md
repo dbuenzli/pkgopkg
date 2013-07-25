@@ -33,7 +33,8 @@ These tool must be invoked in the root directory of a project.
 To packagify a project.
 
 1. Copy `pkg` directory to root directory of the distribution. 
-2. Add `pkg/config` with at least $NAME, $VERSION and $MAINTAINER E.g.
+2. Add `pkg/config` with at least `$NAME`, `$VERSION` and `$MAINTAINER`. E.g.
+
    ```
    NAME=example
    VERSION=`git describe master | sed "s/^.//"`
@@ -46,5 +47,5 @@ To packagify a project.
 
 ## jsoo
 
-* [jsoo/jsoo-build](jsoo/jsoo-build) simple js_of_ocaml project
+* [jsoo/jsoo-build](jsoo/jsoo-build) simple `js_of_ocaml` project
   builder.
