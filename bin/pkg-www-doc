@@ -30,5 +30,5 @@ if [ ! -f doc/api.odocl ]; then
     exit 1
 fi
   
-./pkg/pkg-doc doc/api.docdir
+pkg-doc doc/api.docdir
 cp $BUILDDIR/doc/api.docdir/* $PKGWWWROOT/doc/
