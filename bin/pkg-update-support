@@ -21,7 +21,7 @@ fi
 
 SRC=${SRC:=$HOME/sync/published/pkgopkg}
 
-cp $SRC/pkg/* $LOC/pkg/*
+cp $SRC/pkg/* $LOC/pkg/
 
 if [ -f $LOC/pkg/jsoo-build ]; then
     cp $SRC/jsoo/jsoo-build $LOC/pkg/jsoo-build
