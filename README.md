@@ -34,11 +34,11 @@ To packagify a project.
 
 1. Copy `pkg` directory to root directory of the distribution. 
 2. Add `pkg/config` with at least $NAME, $VERSION and $MAINTAINER E.g.
-```
-NAME=example
-VERSION=`git describe master | sed "s/^.//"`
-MAINTAINER="Daniel Bünzli <daniel.buenzl i\\\@erratique.ch>"
-```
+   ```
+   NAME=example
+   VERSION=`git describe master | sed "s/^.//"`
+   MAINTAINER="Daniel Bünzli <daniel.buenzl i\\\@erratique.ch>"
+   ```
 3. Add `pkg/META` describing the library.
 4. Add `pkg/build` describing what to install using 
    [pkg-builder](pkg/pkg-builder)
