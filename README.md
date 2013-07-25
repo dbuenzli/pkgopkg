@@ -1,7 +1,7 @@
 pkgopkg — Tools for distributing OCaml software on erratique.ch
 -------------------------------------------------------------------------------
 
-Ad-hoc tools to distribute OCaml software.
+Ad-hoc tools to develop and distribute OCaml software.
 
 ## Installation
 
@@ -17,6 +17,10 @@ The installed tools are described in the `bin` section below.
 
 These tool must be invoked in the root directory of a project.
 
+
+* [`pkg-doc`](bin/pkg-doc) generate the documentation of package. 
+* [`reload-browser`](bin/reload-browser) reload an URI in a browser
+  tab.
 * [`pkg-update-support`](bin/pkg-update-support) update the package
   independent support file in the `pkg` of a project.
 * [`pkg-distrib`](bin/pkg-distrib) make a distribution tarball in
