@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Usage: pkg-www-doc
+# Publishes the project's api docs on the www. Invoke from the root directory
+# of the project.
+
+set -e
+LOC=`pwd`
+
+if [ ! -f "$LOC/pkg/config" ]
+then
+    echo "The \`$LOC/pkg/config' file does not exist."
+    exit 1
+fi
+
+. $LOC/pkg/config
+
+PKGWWWROOT=${PKGWWWROOT:="$HOME/sync/erratique/maps/software/$NAME"}
+CLONEDIR=${CLONEDIR:="/tmp/$NAME-$VERSION"}
+BUILDDIR=${BUILDDIR:="_build"}
+
+rm -R -f $CLONEDIR
+git clone -b master . $CLONEDIR
+cd $CLONEDIR
+
+. pkg/pkg-varsubsts
+
+if [ ! -f doc/api.odocl ]; then 
+    echo "The \`$CLONEDIR/doc/api.docdir' file does not exist."
+    exit 1
+fi
+  
+./pkg/pkg-doc doc/api.docdir
+cp $BUILDDIR/doc/api.docdir/* $PKGWWWROOT/doc/
