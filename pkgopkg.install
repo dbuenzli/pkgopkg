@@ -3,7 +3,7 @@ bin:
 [ 
   "bin/pkg-update-support" { "pkg-update-support" }
   "bin/pkg-doc" { "pkg-doc" }
-  "bin/browser-reload" { "browser-reload" }
+  "bin/reload-browser" { "reload-browser" }
   "bin/pkg-distrib" { "pkg-distrib" }
   "bin/pkg-www-demos" { "pkg-www-demos" } 
   "bin/pkg-www-doc" { "pkg-www-doc" } 
