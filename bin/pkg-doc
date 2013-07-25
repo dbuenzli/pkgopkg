@@ -4,9 +4,11 @@
 #
 # -b [BROWSER] If present opens the result in BROWSER. If the option argument 
 #              is absent uses $BROWSER, see the `browser-reload` script.
+#
+# Invoke from the root directory of the project.
 
 set -e
-LOC=`dirname $0`
+LOC=`pwd`
 
 OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -classic-display -use-ocamlfind"}
 OCAMLDOCFLAGS=${OCAMLDOCFLAGS:="-docflags -colorize-code,-charset,utf-8"}
@@ -47,11 +49,11 @@ fi
 $OCAMLBUILD -no-links $OCAMLDOCFLAGS $DOCDIRFILE/index.html
 cp doc/style.css $BUILDDIR/$DOCDIRFILE/style.css
 
-if [ -f $LOC/hook-pkg-doc ]; then
-    . $LOC/hook-pkg-doc
+if [ -f $LOC/pkg/hook-pkg-doc ]; then
+    . $LOC/pkg/hook-pkg-doc
 fi
 
 # Reload browser
 if [ "$RELOAD_BROWSER" == "true" ]; then 
-     $LOC/reload-browser $THE_BROWSER file://$PWD/$BUILDDIR/$DOCDIRFILE/
+    reload-browser $THE_BROWSER file://$PWD/$BUILDDIR/$DOCDIRFILE/
 fi
