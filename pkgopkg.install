@@ -1,4 +1,4 @@
-version: "1"
+opam-version: "1"
 bin:
 [ 
   "bin/pkg-update-support" { "pkg-update-support" }
