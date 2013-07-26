@@ -13,11 +13,8 @@ then
     exit 1
 fi
 
-SED=${SED="sed"}
+SED=${SED:="sed"}
 
 $SED -n \
 "/^.* —/,/Home page:/{s/^.* — //;/^Home page:/d;/^Release/d;/^--*$/d;p;}" \
 README.md
-
-
-
