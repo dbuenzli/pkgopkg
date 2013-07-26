@@ -9,4 +9,5 @@ bin:
   "bin/pkg-www-demos" { "pkg-www-demos" } 
   "bin/pkg-www-doc" { "pkg-www-doc" } 
   "bin/pkg-www-release" { "pkg-www-release" } 
+  "jsoo/jsoo-build" { "jsoo-build" }
 ]
