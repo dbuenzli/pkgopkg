@@ -4,6 +4,7 @@ bin:
   "bin/pkg-update-support" { "pkg-update-support" }
   "bin/pkg-doc" { "pkg-doc" }
   "bin/reload-browser" { "reload-browser" }
+  "bin/pkg-opam-descr" { "pkg-opam-descr" }
   "bin/pkg-distrib" { "pkg-distrib" }
   "bin/pkg-www-demos" { "pkg-www-demos" } 
   "bin/pkg-www-doc" { "pkg-www-doc" } 

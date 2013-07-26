@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Usage: pkg-opam-descr
+# Extract an opam descr file from README.md and write it on stdout. 
+# Invoke from the root of the project.
+
+set -e
+LOC=`pwd`
+
+if [ ! -f "$LOC/README.md" ]
+then
+    echo "The file \`$LOC/README.md' does not exist."
+    exit 1
+fi
+
+SED=${SED="sed"}
+
+$SED -n \
+"/^.* —/,/Home page:/{s/^.* — //;/^Home page:/d;/^Release/d;/^--*$/d;p;}" \
+README.md
+
+
+
