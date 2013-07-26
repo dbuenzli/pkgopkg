@@ -65,8 +65,8 @@ if [ -f $BASE.html ]; then cp $BASE.html $BUILDDIR/$BASE.html; fi
 if [ -f $BASE.css ]; then cp $BASE.css $BUILDDIR/$BASE.css; fi
 
 # Reload browser
-if [ "$RELOAD_BROWSER" == "true" ]; then 
-    if [ "$RELOAD_URI" == "" ]; then 
+if [ "$RELOAD_BROWSER" = "true" ]; then 
+    if [ "$RELOAD_URI" = "" ]; then 
         RELOAD_URI="file://$PWD/$BUILDDIR/$BASE.html"
     fi
     reload-browser $THE_BROWSER $RELOAD_URI

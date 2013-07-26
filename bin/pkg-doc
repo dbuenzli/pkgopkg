@@ -54,6 +54,6 @@ if [ -f $LOC/pkg/hook-pkg-doc ]; then
 fi
 
 # Reload browser
-if [ "$RELOAD_BROWSER" == "true" ]; then 
+if [ "$RELOAD_BROWSER" = "true" ]; then 
     reload-browser $THE_BROWSER file://$PWD/$BUILDDIR/$DOCDIRFILE/
 fi

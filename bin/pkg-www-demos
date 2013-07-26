@@ -15,7 +15,7 @@ fi
 
 . $LOC/pkg/config
 
-if [ "$WWWDEMOS" == "" ]
+if [ "$WWWDEMOS" = "" ]
 then
     echo "No \$WWWDEMOS variable found in $LOC/pkg/config"
     exit 1
@@ -33,5 +33,5 @@ cd $CLONEDIR
 
 for D in $WWWDEMOS; do
     ./build $D
-    cp $BUILDDIR/test/$D.{html,js} $PKGWWWROOT/demos/
+    cp $BUILDDIR/test/$D.html $BUILDDIR/test/$D.html.js $PKGWWWROOT/demos/
 done
