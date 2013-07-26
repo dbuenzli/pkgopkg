@@ -24,7 +24,7 @@ These tool must be invoked in the root directory of a project.
 * [`pkg-update-support`](bin/pkg-update-support) update the package
   independent support file in the `pkg` of a project.
 * [`pkg-opam-descr`](bin/pkg-opam-descr) extract an opam `descr`
-  from a README.md on stdout.
+  from a `README.md` file on stdout.
 * [`pkg-distrib`](bin/pkg-distrib) make a distribution tarball in
   `/tmp`.
 * [`pkg-www-release`](bin/pkg-www-release) publish the distribution

@@ -9,7 +9,7 @@ LOC=`pwd`
 
 if [ ! -f "$LOC/pkg/config" ]
 then
-    echo "The \`$LOC/pkg/config' file does not exist."
+    echo "The file \`$LOC/pkg/config' does not exist."
     exit 1
 fi
 
@@ -26,7 +26,7 @@ cd $CLONEDIR
 . pkg/pkg-varsubsts
 
 if [ ! -f doc/api.odocl ]; then 
-    echo "The \`$CLONEDIR/doc/api.docdir' file does not exist."
+    echo "The file \`$CLONEDIR/doc/api.docdir' does not exist."
     exit 1
 fi
   
