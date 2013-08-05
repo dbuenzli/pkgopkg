@@ -33,5 +33,5 @@ cd $CLONEDIR
 
 for D in $WWWDEMOS; do
     ./build $D
-    cp $BUILDDIR/test/$D.html $BUILDDIR/test/$D.html.js $PKGWWWROOT/demos/
+    cp $BUILDDIR/test/$D.html $BUILDDIR/test/$D.js $PKGWWWROOT/demos/
 done
