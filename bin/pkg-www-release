@@ -28,7 +28,7 @@ ARCHIVE=/tmp/$PKGDIR.tbz
 cp $ARCHIVE $PKGWWWROOT/releases/
 
 # Update the doc
-rm -R $PGKWWWROOT/doc
+rm -R $PKGWWWROOT/doc
 $TAR -C $PKGWWWROOT --strip-components=1 -xvjf $ARCHIVE $PKGDIR/doc
 
 # Update the demos
