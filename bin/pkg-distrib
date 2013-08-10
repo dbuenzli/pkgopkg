@@ -38,7 +38,7 @@ fi
 
 # Generate static API doc (if any)
 if [ -f doc/api.odocl ]; then 
-  . pkg/pkg-doc doc/api.docdir
+  pkg-doc doc/api.docdir
   cp _build/doc/api.docdir/*.html doc/
 fi
 
