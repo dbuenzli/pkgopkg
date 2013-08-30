@@ -19,7 +19,6 @@ PKGWWWROOT=${PKGWWWROOT:="$HOME/sync/erratique/maps/software/$NAME"}
 CLONEDIR=${CLONEDIR:="/tmp/$NAME-$VERSION"}
 BUILDDIR=${BUILDDIR:="_build"}
 
-rm -R -f $CLONEDIR
 git clone -b master . $CLONEDIR
 cd $CLONEDIR
 
@@ -32,3 +31,5 @@ fi
   
 pkg-doc doc/api.docdir
 cp $BUILDDIR/doc/api.docdir/* $PKGWWWROOT/doc/
+
+rm -R -f $CLONEDIR

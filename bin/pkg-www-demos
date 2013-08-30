@@ -25,7 +25,6 @@ PKGWWWROOT=${PKGWWWROOT:="$HOME/sync/erratique/maps/software/$NAME"}
 CLONEDIR=${CLONEDIR:="/tmp/$NAME-$VERSION"}
 BUILDDIR=${BUILDDIR:="_build"}
 
-rm -R -f $CLONEDIR
 git clone -b master . $CLONEDIR
 cd $CLONEDIR
 
@@ -35,3 +34,6 @@ for D in $WWWDEMOS; do
     ./build $D
     cp $BUILDDIR/test/$D.html $BUILDDIR/test/$D.js $PKGWWWROOT/demos/
 done
+
+rm -R -f $CLONEDIR
+

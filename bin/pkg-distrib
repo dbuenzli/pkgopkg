@@ -22,7 +22,6 @@ OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -classic-display -use-ocamlfind"}
 TAR=${TAR:="tar"}
 
 # Start from a checkout of master
-rm -R -f $CLONEDIR
 git clone -b master . $CLONEDIR
 cd $CLONEDIR
 
@@ -58,3 +57,5 @@ $OCAMLBUILD -clean
 cd ..
 $TAR -cvjf $PKGDIR.tbz $PKGDIR
 rm -R $PKGDIR
+
+rm -R -f $CLONEDIR
