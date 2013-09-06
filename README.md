@@ -29,6 +29,8 @@ These tool must be invoked in the root directory of a project.
   `/tmp`.
 * [`pkg-www-release`](bin/pkg-www-release) publish the distribution
   tarball created by `pkg-distrib` on erratique.ch.
+* [`pkg-opam-pkg`](bin/pkg-opam-pkg) make an opam package for the
+  distribution tarball created by `pkg-distrib`.
 * [`pkg-www-doc`](bin/pkg-www-demos) publish the documentation 
   of the project on erratique.ch.
 * [`pkg-www-demos`](bin/pkg-www-demos) publish the jsoo demos of the
