@@ -6,6 +6,7 @@
 
 set -e
 LOC=`pwd`
+ORIGINALREPO=`pwd`
 
 if [ ! -f "$LOC/pkg/config" ]
 then
