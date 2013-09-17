@@ -25,12 +25,12 @@ TAR=${TAR:="tar"}
 git clone -b master . $CLONEDIR
 cd $CLONEDIR
 
+# Substitute a few things
+. pkg/pkg-varsubsts
+
 if [ -f pkg/hook-pkg-distrib-pre-build ]; then
     . pkg/hook-pkg-distrib-pre-build
 fi
-
-# Substitute a few things
-. pkg/pkg-varsubsts
 
 # Remove dev artefacts
 rm -R -f .git .gitignore build $DEV_BUILD_ARTEFACTS
@@ -60,5 +60,4 @@ rm pkg/hook-pkg-distrib-post-build
 cd ..
 $TAR -cvjf $PKGDIR.tbz $PKGDIR
 rm -R $PKGDIR
-
 rm -R -f $CLONEDIR
