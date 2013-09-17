@@ -54,8 +54,8 @@ fi
 # Cleanup any mess
 $OCAMLBUILD -clean
 
-rm pkg/hook-pkg-distrib-pre-build
-rm pkg/hook-pkg-distrib-post-build
+rm -f pkg/hook-pkg-distrib-pre-build
+rm -f pkg/hook-pkg-distrib-post-build
 
 # Make tarball
 cd ..
