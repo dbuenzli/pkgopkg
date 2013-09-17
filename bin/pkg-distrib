@@ -25,15 +25,15 @@ TAR=${TAR:="tar"}
 git clone -b master . $CLONEDIR
 cd $CLONEDIR
 
+if [ -f pkg/hook-pkg-distrib-pre-build ]; then
+    . pkg/hook-pkg-distrib-pre-build
+fi
+
 # Substitute a few things
 . pkg/pkg-varsubsts
 
 # Remove dev artefacts
 rm -R -f .git .gitignore build $DEV_BUILD_ARTEFACTS
-
-if [ -f pkg/hook-pkg-distrib-pre-build ]; then
-    . pkg/hook-pkg-distrib-pre-build
-fi
 
 # Generate static API doc (if any)
 if [ -f doc/api.odocl ]; then 
@@ -52,6 +52,9 @@ fi
 
 # Cleanup any mess
 $OCAMLBUILD -clean
+
+rm pkg/hook-pkg-distrib-pre-build
+rm pkg/hook-pkg-distrib-post-build
 
 # Make tarball
 cd ..
