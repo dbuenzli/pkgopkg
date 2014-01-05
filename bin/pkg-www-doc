@@ -6,6 +6,7 @@
 
 set -e
 LOC=`pwd`
+ORIGINALREPO=`pwd`
 
 if [ ! -f "$LOC/pkg/config" ]
 then
@@ -23,6 +24,10 @@ git clone -b master . $CLONEDIR
 cd $CLONEDIR
 
 . pkg/pkg-varsubsts
+
+if [ -f pkg/hook-pkg-www-doc-pre ]; then
+    . pkg/hook-pkg-www-doc-pre
+fi
 
 if [ ! -f doc/api.odocl ]; then 
     echo "The file \`$CLONEDIR/doc/api.docdir' does not exist."
