@@ -19,7 +19,7 @@ if [ "`git status --porcelain`" != "" ]; then
     exit 1
 fi
 
-SRC=${SRC:=$HOME/sync/published/pkgopkg}
+SRC=${SRC:=$HOME/sync/repos/pkgopkg}
 
 cp $SRC/pkg/* $LOC/pkg/
 
