@@ -49,9 +49,12 @@ fi
 $OCAMLBUILD -no-links $OCAMLDOCFLAGS $DOCDIRFILE/index.html
 cp doc/style.css $BUILDDIR/$DOCDIRFILE/style.css
 
-for f in `ls doc/*.png`; do 
-    cp $f $BUILDDIR/$DOCDIRFILE/
+for f in ./doc/*.png; do 
+    if [ -e "$f" ]; then 
+        cp "$f" $BUILDDIR/$DOCDIRFILE/
+    fi
 done
+
 
 if [ -f $LOC/pkg/hook-pkg-doc ]; then
     . $LOC/pkg/hook-pkg-doc
