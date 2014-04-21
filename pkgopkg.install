@@ -13,6 +13,7 @@ bin:
   "bin/pkg-www-release.sh" { "pkg-www-release.sh" } 
   "bin/pkg-www-release" { "pkg-www-release" } 
   "bin/pkg-opam-pkg.sh" { "pkg-opam-pkg.sh" } 
+  "bin/pkg-opam-pkg" { "pkg-opam-pkg" } 
   "bin/repo-make-public" { "repo-make-public" } 
   "jsoo/jsoo-build" { "jsoo-build" }
 ]

@@ -1,0 +1,36 @@
+#!/usr/bin/env ocaml
+#directory "pkg"
+#use "config.ml"
+
+(* Usage: pkg-opam-pkg [DIR]
+  
+   Makes in DIR (defaults to /tmp) a package for the tarball in /tmp. 
+   Invoke from root directory of the project. *)
+
+let str = Printf.sprintf 
+
+let dir = if Array.length Sys.argv > 1 then Sys.argv.(1) else "/tmp"
+let http_root = "http://erratique.ch/software"
+
+let digest f = 
+  try `Ok (Digest.to_hex (Digest.file f)) with
+  Sys_error e -> `Error (str "%s: %s" f e)
+  
+let () = 
+  Vars.get "NAME" Config.vars &>>= fun name -> 
+  Vars.get "VERSION" Config.vars  &>>= fun version -> 
+  let pkg_archive = str "%s-%s.tbz" name version in
+  let http_pkg = str "%s/%s/releases/%s" http_root name pkg_archive in 
+  let dst = str "%s/%s.%s" dir name version in
+  (* Make package directory *)
+  Cmd.exec (str "mkdir -p %s" dst) &>>= fun () ->
+  (* Write descr file as extracted from README.md *)
+  Cmd.read "pkg-opam-descr" &>>= fun descr ->
+  File.write (str "%s/descr" dst) descr &>>= fun () ->
+  (* Write url file with checksum of the archive *)
+  digest (str "/tmp/%s" pkg_archive) &>>= fun checksum ->
+  let url = str "archive: \"%s\"\nchecksum: \"%s\"\n" http_pkg checksum in
+  File.write (str "%s/url" dst) url &>>= fun () -> 
+  (* Copy opam file *)
+  Cmd.exec (str "cp opam %s/opam" dst) &>>= fun () -> ()
+
