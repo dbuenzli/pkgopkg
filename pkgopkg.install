@@ -7,6 +7,7 @@ bin:
   "bin/pkg-distrib" { "pkg-distrib" }
   "bin/pkg-distrib.sh" { "pkg-distrib.sh" }
   "bin/pkg-www-demos.sh" { "pkg-www-demos.sh" } 
+  "bin/pkg-www-demos" { "pkg-www-demos" } 
   "bin/pkg-www-doc.sh" { "pkg-www-doc.sh" } 
   "bin/pkg-www-doc" { "pkg-www-doc" } 
   "bin/pkg-www-release.sh" { "pkg-www-release.sh" } 
