@@ -1,6 +1,6 @@
 bin:
 [ 
-  "bin/pkg-update-support" { "pkg-update-support" }
+  "bin/pkg-update-support.sh" { "pkg-update-support.sh" }
   "bin/pkg-doc" { "pkg-doc" }
   "bin/reload-browser" { "reload-browser" }
   "bin/pkg-opam-descr" { "pkg-opam-descr" }
