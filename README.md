@@ -42,6 +42,8 @@ These tool must be invoked in the root directory of a project.
 
 To packagify a project.
 
+** Deprecated ** Use [topkg](http://github.com/dbuenzli/topkg) instead.
+
 1. Copy `pkg` directory to root directory of the distribution. 
 2. Add `pkg/config` with at least `$NAME`, `$VERSION` and `$MAINTAINER`. E.g.
 

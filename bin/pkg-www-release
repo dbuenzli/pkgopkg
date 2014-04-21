@@ -1,0 +1,37 @@
+#!/usr/bin/env ocaml
+#directory "pkg"
+#use "config.ml"
+
+(* Usage: pkg-www-release
+  
+   Publishes the tarball in /tmp on the www with webglue. Invoke from 
+   root directory of the project. *)
+
+let str = Printf.sprintf 
+
+let wwwroot = (Sys.getenv "HOME") ^ "/sync/erratique"
+let pkgwwwroot name = str "%s/maps/software/%s" wwwroot name
+
+let update_www_demos () = 
+  if Config.www_demos = [] then `Ok () else Cmd.exec "pkg-www-demos"
+
+let () = 
+  Vars.get "NAME" Config.vars &>>= fun name -> 
+  Vars.get "VERSION" Config.vars  &>>= fun version -> 
+  let pkg_dir = str "%s-%s" name version in
+  let archive = str "/tmp/%s.tbz" pkg_dir in
+  let pkg_www_dir d = str "%s/%s" (pkgwwwroot name) d in
+  (* Copy tarball to release directory *) 
+  Cmd.exec (str "cp %s %s/" archive (pkg_www_dir "releases")) &>>= fun () ->
+  (* Update doc with doc from tarball *)
+  Cmd.exec (str "rm -R %s" (pkg_www_dir "doc")) &>>= fun () -> 
+  Cmd.exec (str "tar -C %s --strip-components=1 -xvjf %s %s/doc"
+              (pkgwwwroot name) archive pkg_dir) &>>=
+  (* Update demos *) 
+  update_www_demos &>>= fun () -> 
+  (* Update the webpage *) 
+  Dir.change_cwd wwwroot &>>= fun () ->
+  Cmd.exec (str "echo %s | webglue set --replace %s s-last-version"
+              version name) &>>= fun () -> 
+  Cmd.exec (str "webglue get timestamp utc | webglue set --replace %s s-updated"
+              name) &>>= fun () -> ()
