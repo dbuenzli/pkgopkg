@@ -1,0 +1,31 @@
+#!/usr/bin/env ocaml
+#directory "pkg"
+#use "config.ml"
+
+(* Usage: pkg-www-doc
+  
+   Publishes the project's API docs on the www. Invoke from the root
+   directory of the project. *)
+
+let str = Printf.sprintf 
+
+let pkgwwwroot name = str "~/sync/erratique/maps/software/%s/" name
+
+let build_doc () = 
+  if not (File.exists "doc/api.odocl") 
+  then `Error ("No doc/api.odocl file in the repo.")  else
+  Cmd.exec ("pkg-doc doc/api.docdir")  
+
+let () = 
+  Vars.get "NAME" Config.vars &>>= fun name -> 
+  Vars.get "VERSION" Config.vars  &>>= fun version -> 
+  let pkg_dir = str "%s-%s" name version in
+  let clone_dir = str "/tmp/%s" pkg_dir  in
+  let pkgwwwroot = pkgwwwroot name in
+  Cmd.exec (str "git clone -b master . %s" clone_dir) &>>= fun () ->
+  Dir.change_cwd clone_dir &>>= fun () ->
+  Vars.subst ~skip:Config.subst_skip ~vars:Config.vars ~dir:"." &>>=
+  build_doc &>>= fun () -> 
+  Cmd.exec (str "cp _build/doc/api.docdir/* %s/doc/" pkgwwwroot) &>>= fun () ->
+  Dir.change_cwd ".." &>>= fun () ->
+  Cmd.exec (str "rm -Rf %s" pkg_dir) &>>= fun () -> ()

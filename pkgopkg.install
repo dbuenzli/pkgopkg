@@ -8,6 +8,7 @@ bin:
   "bin/pkg-distrib.sh" { "pkg-distrib.sh" }
   "bin/pkg-www-demos.sh" { "pkg-www-demos.sh" } 
   "bin/pkg-www-doc.sh" { "pkg-www-doc.sh" } 
+  "bin/pkg-www-doc" { "pkg-www-doc" } 
   "bin/pkg-www-release.sh" { "pkg-www-release.sh" } 
   "bin/pkg-opam-pkg.sh" { "pkg-opam-pkg.sh" } 
   "bin/repo-make-public" { "repo-make-public" } 
