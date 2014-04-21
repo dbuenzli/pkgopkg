@@ -35,6 +35,8 @@ These tool must be invoked in the root directory of a project.
   of the project on erratique.ch.
 * [`pkg-www-demos`](bin/pkg-www-demos) publish the jsoo demos of the
   project on erratique.ch.
+* [`repo-make-public`](bin/repo-make-public) from a local repo and
+  a description make a master remote repo with a github mirror.
 
 ## pkg
 
