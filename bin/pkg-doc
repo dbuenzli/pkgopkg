@@ -55,11 +55,6 @@ for f in ./doc/*.png; do
     fi
 done
 
-
-if [ -f $LOC/pkg/hook-pkg-doc ]; then
-    . $LOC/pkg/hook-pkg-doc
-fi
-
 # Reload browser
 if [ "$RELOAD_BROWSER" = "true" ]; then 
     reload-browser $THE_BROWSER file://$PWD/$BUILDDIR/$DOCDIRFILE/
