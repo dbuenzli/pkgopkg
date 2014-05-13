@@ -19,21 +19,23 @@ let has_www_demos () =
 let rec publish_www_demos dst = function  (* not t.r. *) 
 | [] -> `Ok () 
 | d :: ds -> 
-    Cmd.exec (str "./build %s" d) &>>= fun () ->
+    Cmd.exec (str "./build %s" d) 
+    >>& fun () ->
     Cmd.exec (str "cp _build/test/%s.html _build/test/%s.js %s" d d dst) 
-    &>>= fun () -> 
-    publish_www_demos dst ds
+    >>& fun () -> publish_www_demos dst ds
 
 let () = 
-  Vars.get "NAME" Config.vars &>>= fun name -> 
-  Vars.get "VERSION" Config.vars  &>>= fun version -> 
-  has_www_demos () &>>= fun () ->
+  Vars.get "NAME" Config.vars 
+  >>& fun name -> Vars.get "VERSION" Config.vars  
+  >>& fun version -> has_www_demos () 
+  >>& fun () ->
   let pkg_dir = str "%s-%s" name version in
   let clone_dir = str "/tmp/%s" pkg_dir  in
   let pkgwwwroot = pkgwwwroot name in
-  Cmd.exec (str "git clone -b master . %s" clone_dir) &>>= fun () ->
-  Dir.change_cwd clone_dir &>>= fun () ->
-  Vars.subst ~skip:Config.subst_skip ~vars:Config.vars ~dir:"." &>>= fun () ->
-  publish_www_demos (pkgwwwroot ^ "demos/") Config.www_demos &>>= fun () -> 
-  Dir.change_cwd ".." &>>= fun () ->
-  Cmd.exec (str "rm -Rf %s" pkg_dir) &>>= fun () -> ()
+  Cmd.exec (str "git clone -b master . %s" clone_dir) 
+  >>& fun () -> Dir.change_cwd clone_dir 
+  >>& fun () -> Vars.subst ~skip:Config.subst_skip ~vars:Config.vars ~dir:"." 
+  >>& fun () -> publish_www_demos (pkgwwwroot ^ "demos/") Config.www_demos 
+  >>& fun () -> Dir.change_cwd ".." 
+  >>& fun () -> Cmd.exec (str "rm -Rf %s" pkg_dir) 
+  >>& fun () -> ()

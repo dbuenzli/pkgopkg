@@ -17,20 +17,22 @@ let digest f =
   Sys_error e -> `Error (str "%s: %s" f e)
   
 let () = 
-  Vars.get "NAME" Config.vars &>>= fun name -> 
-  Vars.get "VERSION" Config.vars  &>>= fun version -> 
+  Vars.get "NAME" Config.vars 
+  >>& fun name -> Vars.get "VERSION" Config.vars  
+  >>& fun version -> 
   let pkg_archive = str "%s-%s.tbz" name version in
   let http_pkg = str "%s/%s/releases/%s" http_root name pkg_archive in 
   let dst = str "%s/%s.%s" dir name version in
   (* Make package directory *)
-  Cmd.exec (str "mkdir -p %s" dst) &>>= fun () ->
+  Cmd.exec (str "mkdir -p %s" dst) 
   (* Write descr file as extracted from README.md *)
-  Cmd.read "pkg-opam-descr" &>>= fun descr ->
-  File.write (str "%s/descr" dst) descr &>>= fun () ->
+  >>& fun () -> Cmd.read "pkg-opam-descr" 
+  >>& fun descr -> File.write (str "%s/descr" dst) descr 
   (* Write url file with checksum of the archive *)
-  digest (str "/tmp/%s" pkg_archive) &>>= fun checksum ->
+  >>& fun () -> digest (str "/tmp/%s" pkg_archive) 
+  >>& fun checksum ->
   let url = str "archive: \"%s\"\nchecksum: \"%s\"\n" http_pkg checksum in
-  File.write (str "%s/url" dst) url &>>= fun () -> 
+  File.write (str "%s/url" dst) url 
   (* Copy opam file *)
-  Cmd.exec (str "cp opam %s/opam" dst) &>>= fun () -> ()
+  >>& fun () -> Cmd.exec (str "cp opam %s/opam" dst) >>& fun () -> ()
 

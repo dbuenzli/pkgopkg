@@ -16,26 +16,28 @@ let distrib_remove () =
 
 let build_doc () = 
   if not (File.exists "doc/api.odocl") then `Ok () else
-  Cmd.exec ("pkg-doc doc/api.docdir") &>>= fun () ->
-  Cmd.exec "cp _build/doc/api.docdir/*.html doc/"
+  Cmd.exec ("pkg-doc doc/api.docdir") 
+  >>& fun () -> Cmd.exec "cp _build/doc/api.docdir/*.html doc/"
 
 let build_tests () = 
   if not (File.exists "test/tests.itarget") then `Ok () else 
   Cmd.exec (ocamlbuild "test/tests.otarget")
 
 let () = 
-  Vars.get "NAME" Config.vars &>>= fun name -> 
-  Vars.get "VERSION" Config.vars  &>>= fun version -> 
+  Vars.get "NAME" Config.vars 
+  >>& fun name -> Vars.get "VERSION" Config.vars 
+  >>& fun version -> 
   let pkg_dir = str "%s-%s" name version in
   let clone_dir = str "/tmp/%s" pkg_dir  in
-  Cmd.exec ("git clone -b master . " ^ clone_dir) &>>= fun () -> 
-  Dir.change_cwd clone_dir &>>= fun () ->
-  Vars.subst ~skip:Config.subst_skip ~vars:Config.vars ~dir:"." &>>= fun () ->
-  Cmd.exec_hook Config.distrib_hook &>>= 
-  distrib_remove &>>=
-  build_doc &>>= 
-  build_tests &>>= fun () ->
-  Cmd.exec (ocamlbuild "-clean") &>>= fun () ->
-  Dir.change_cwd ".." &>>= fun () ->
-  Cmd.exec (str "tar -cvjf %s.tbz %s" pkg_dir pkg_dir) &>>= fun () ->
-  Cmd.exec (str "rm -R %s" pkg_dir) &>>= fun () -> ()
+  Cmd.exec ("git clone -b master . " ^ clone_dir) 
+  >>& fun () -> Dir.change_cwd clone_dir 
+  >>& fun () -> Vars.subst ~skip:Config.subst_skip ~vars:Config.vars ~dir:"." 
+  >>& fun () -> Cmd.exec_hook Config.distrib_hook 
+  >>& distrib_remove 
+  >>& build_doc 
+  >>& build_tests 
+  >>& fun () -> Cmd.exec (ocamlbuild "-clean") 
+  >>& fun () -> Dir.change_cwd ".." 
+  >>& fun () -> Cmd.exec (str "tar -cvjf %s.tbz %s" pkg_dir pkg_dir) 
+  >>& fun () -> Cmd.exec (str "rm -R %s" pkg_dir) 
+  >>& fun () -> ()
