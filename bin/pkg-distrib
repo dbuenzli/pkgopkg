@@ -39,5 +39,5 @@ let () =
   >>& fun () -> Cmd.exec (ocamlbuild "-clean") 
   >>& fun () -> Dir.change_cwd ".." 
   >>& fun () -> Cmd.exec (str "tar -cvjf %s.tbz %s" pkg_dir pkg_dir) 
-  >>& fun () -> Cmd.exec (str "rm -R %s" pkg_dir) 
+  >>& fun () -> Cmd.exec (str "rm -R -f %s" pkg_dir) 
   >>& fun () -> ()
