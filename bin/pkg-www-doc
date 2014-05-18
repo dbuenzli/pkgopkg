@@ -5,29 +5,24 @@
 (* Usage: pkg-www-doc
   
    Publishes the project's API docs on the www. Invoke from the root
-   directory of the project. *)
+   directory of the project. 
+   
+   We just build a distribution and extract its docs. *)
 
 let str = Printf.sprintf 
 
-let pkgwwwroot name = str "~/sync/erratique/maps/software/%s/" name
-
-let build_doc () = 
-  if not (File.exists "doc/api.odocl") 
-  then `Error ("No doc/api.odocl file in the repo.")  else
-  Cmd.exec ("pkg-doc doc/api.docdir")  
+let wwwroot = (Sys.getenv "HOME") ^ "/sync/erratique"
+let pkgwwwroot name = str "%s/maps/software/%s" wwwroot name
 
 let () = 
   Vars.get "NAME" Config.vars 
   >>& fun name -> Vars.get "VERSION" Config.vars 
-  >>& fun version -> 
+  >>& fun version -> Cmd.exec "pkg-distrib"
+  >>& fun () ->
   let pkg_dir = str "%s-%s" name version in
-  let clone_dir = str "/tmp/%s" pkg_dir  in
-  let pkgwwwroot = pkgwwwroot name in
-  Cmd.exec (str "git clone -b master . %s" clone_dir) 
-  >>& fun () -> Dir.change_cwd clone_dir 
-  >>& fun () -> Vars.subst ~skip:Config.subst_skip ~vars:Config.vars ~dir:"." 
-  >>& build_doc 
-  >>& fun () -> Cmd.exec (str "cp _build/doc/api.docdir/* %s/doc/" pkgwwwroot) 
-  >>& fun () -> Dir.change_cwd ".." 
-  >>& fun () -> Cmd.exec (str "rm -Rf %s" pkg_dir) 
+  let archive = str "/tmp/%s.tbz" pkg_dir in
+  let pkg_www_dir d = str "%s/%s" (pkgwwwroot name) d in
+  Cmd.exec (str "rm -R %s" (pkg_www_dir "doc"))
+  >>& fun () -> Cmd.exec (str "tar -C %s --strip-components=1 -xvjf %s %s/doc"
+                            (pkgwwwroot name) archive pkg_dir)
   >>& fun () -> ()
