@@ -5,11 +5,9 @@ Ad-hoc tools to develop and distribute OCaml software.
 
 ## Installation
 
-This repo is both an opam repo and an opam package. To install:
+To install:
 
-    opam repo add pkgopkg http://erratique.ch/repos/pkgopkg.git
-    opam update 
-    opam install pkgopkg
+    opam pin add pkgopkg http://erratique.ch/repos/pkgopkg.git
     
 The installed tools are described in the `bin` section below.
 
