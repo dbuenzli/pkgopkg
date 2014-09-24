@@ -20,6 +20,11 @@ if [ "$REPO" == "" ]; then
     exit 1
 fi
 
+if [ "$DESCRIPTION" == "" ]; then 
+    echo "You need to specify a description as the second argument."
+    exit 1
+fi
+
 # We make a bare repo by cloning the original $REPO, remove it's remote
 # and copy it to $REMOTE_HOST:$REMOTE_REPO_DIR and addits description to cgit.
 # We then move the original $REPO to $REPO.old, remove the local bare and 
