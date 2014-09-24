@@ -104,7 +104,7 @@ curl -u $GHUSER https://api.github.com/repos/$GHUSER/$REPO/keys \
 echo "Adding github remote to remote repository and syncing to github."
 
 ssh $REMOTE_HOST git --git-dir $REMOTE_REPO_DIR/$REPO.git remote add \
-    --mirror github github_$REPO:$GHUSER/$REPO.git
+    --mirror=push github github_$REPO:$GHUSER/$REPO.git
 
 ssh $REMOTE_HOST git --git-dir $REMOTE_REPO_DIR/$REPO.git push \
     -f --mirror github 
