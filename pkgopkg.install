@@ -1,19 +1,20 @@
 bin:
-[ 
+[
   "bin/pkg-update-support.sh" { "pkg-update-support.sh" }
   "bin/pkg-doc" { "pkg-doc" }
   "bin/reload-browser" { "reload-browser" }
   "bin/pkg-opam-descr" { "pkg-opam-descr" }
   "bin/pkg-distrib" { "pkg-distrib" }
   "bin/pkg-distrib.sh" { "pkg-distrib.sh" }
-  "bin/pkg-www-demos.sh" { "pkg-www-demos.sh" } 
-  "bin/pkg-www-demos" { "pkg-www-demos" } 
-  "bin/pkg-www-doc.sh" { "pkg-www-doc.sh" } 
-  "bin/pkg-www-doc" { "pkg-www-doc" } 
-  "bin/pkg-www-release.sh" { "pkg-www-release.sh" } 
-  "bin/pkg-www-release" { "pkg-www-release" } 
-  "bin/pkg-opam-pkg.sh" { "pkg-opam-pkg.sh" } 
-  "bin/pkg-opam-pkg" { "pkg-opam-pkg" } 
-  "bin/repo-make-public" { "repo-make-public" } 
+  "bin/pkg-www-demos.sh" { "pkg-www-demos.sh" }
+  "bin/pkg-www-demos" { "pkg-www-demos" }
+  "bin/pkg-www-doc.sh" { "pkg-www-doc.sh" }
+  "bin/pkg-www-doc" { "pkg-www-doc" }
+  "bin/pkg-www-release.sh" { "pkg-www-release.sh" }
+  "bin/pkg-www-release" { "pkg-www-release" }
+  "bin/pkg-opam-pkg.sh" { "pkg-opam-pkg.sh" }
+  "bin/pkg-opam-pkg" { "pkg-opam-pkg" }
+  "bin/repo-make-public" { "repo-make-public" }
   "jsoo/jsoo-build" { "jsoo-build" }
+  "bin/source2pdf" { "source2pdf" }
 ]

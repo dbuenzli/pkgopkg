@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# We are all pigs.
+
+err_reading="Error: pdflatex .* reading image file failed"
+err_not_found="Package Listings Error: .* not found."
+
+# 
+LANG=caml
+
+case "$1" in
+    -l) shift; LANG=$1; shift ;;
+esac
+
+# Check arguments.
+case "$1" in
+  ""|-*) echo "Usage: `basename $0` [-l lang ] src [ dst ]"
+	 echo " When no output filename is specified .pdf is added src. "
+	 echo " lang defaults to caml."
+	 exit 1
+esac
+
+if [ -d $1 ]; then
+  echo "Error: '$0' is a directory"
+  exit 1
+fi
+
+if [ ! $2 ]; then
+	outfile=$1.pdf
+elif [ -d $2 ]; then
+	outfile=$2/$1.pdf
+else
+	outfile=$2
+fi
+
+# Compute input and output directory names.
+case "$1" in
+  /*) indir="";;
+   *) indir="`pwd`/";;
+esac
+
+case "$2" in
+  /*) outdir="";;
+   *) outdir="`pwd`/";;
+esac
+
+cd /tmp
+
+# escape underscores
+TITLE="`echo $1 | sed "s/_/\\\\\_/g"`"
+
+# Process file.
+if printf "\\\documentclass[a4paper]{article}\n\
+   \\\usepackage[T1]{fontenc}                     \n\
+   \\\\addtolength{\\\topmargin}{-2cm}		  \n\
+   \\\\addtolength{\\\textheight}{3cm}		  \n\
+   \\\\addtolength{\\\textwidth}{2cm}		  \n\
+   \\\\addtolength{\\\oddsidemargin}{-1cm}	  \n\
+   \\\usepackage{textcomp}                        \n\
+   \\\usepackage[scaled]{berasans}		  \n\
+   \\\renewcommand{\\\rmdefault}{fvs}             \n\
+   \\\usepackage[scaled]{beramono}		  \n\
+   \\\usepackage{listings}                        \n\
+   \\\lstset{language=$LANG,			  \n\
+   columns=[c]fixed,				  \n\
+   basicstyle=\\\small\\\ttfamily,		  \n\
+   keywordstyle=\\\bfseries,			  \n\
+   upquote=true,              			  \n\
+   commentstyle=,				  \n\
+   breaklines=true,			          \n\
+   showstringspaces=false}			  \n\
+   \\\begin{document}                             \n\
+   \\\noindent{\\\Large\\\textbf{$TITLE}}         \n\
+   \\\hfill\\\today				  \n\
+   \\\lstinputlisting{$indir$1}  		  \n\
+   \\\end{document}\n" | pdflatex &> /dev/null
+then
+  mv texput.pdf $outdir$outfile
+else
+  if grep -q "$err_not_found" texput.log; then
+    echo "Error: file '$1' not found"
+    exit 1
+  fi
+  if grep -q "$err_reading" texput.log; then
+    echo "Error: reading file '$1' failed."
+    exit 1
+  fi
+  echo "Error: an unknown error occured (have a look at /tmp/texput.log)."
+  exit 1
+fi
