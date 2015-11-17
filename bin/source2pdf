@@ -2,10 +2,12 @@
 
 # We are all pigs.
 
+set -e
+
 err_reading="Error: pdflatex .* reading image file failed"
 err_not_found="Package Listings Error: .* not found."
 
-# 
+#
 LANG=caml
 
 case "$1" in
