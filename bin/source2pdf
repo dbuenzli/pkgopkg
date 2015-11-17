@@ -8,7 +8,7 @@ err_reading="Error: pdflatex .* reading image file failed"
 err_not_found="Package Listings Error: .* not found."
 
 #
-LANG=caml
+LANG=[objective]caml
 
 case "$1" in
     -l) shift; LANG=$1; shift ;;
