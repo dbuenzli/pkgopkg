@@ -4,6 +4,7 @@ bin:
   "bin/pkg-doc" { "pkg-doc" }
   "bin/reload-browser" { "reload-browser" }
   "bin/pkg-opam-descr" { "pkg-opam-descr" }
+  "bin/pkg-relicense" { "pkg-relicense" }
   "bin/pkg-distrib" { "pkg-distrib" }
   "bin/pkg-distrib.sh" { "pkg-distrib.sh" }
   "bin/pkg-www-demos.sh" { "pkg-www-demos.sh" }

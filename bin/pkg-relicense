@@ -1,0 +1,119 @@
+#!/usr/bin/env ocaml
+#use "topfind"
+#require "bos.setup"
+
+open Bos_setup
+
+let pp_year_opt =
+  Fmt.(option ~none:(unit "unknown, using CARCASS_YEAR") string)
+
+(* Git interaction *)
+
+let git_is_tracked git =
+  let is_tracked = Cmd.(git % "rev-parse" % "--git-dir") in
+  OS.Cmd.(run_status ~quiet:true is_tracked) >>= function
+  | `Exited 0 -> Ok ()
+  | _ -> R.error_msgf "Not in a git repository."
+
+let git_is_clean git =
+  let diff = Cmd.(git % "diff" % "--quiet" % "HEAD") in
+  OS.Cmd.(run_status diff) >>= function
+  | `Exited 0 -> Ok ()
+  | _ -> R.error_msgf "The repository is dirty commit or stash your changes."
+
+let git_tracked_files git =
+  let ls_tree = Cmd.(git % "ls-tree" % "--name-only" % "-r" % "HEAD") in
+  OS.Cmd.(run_out ls_tree |> to_lines)
+
+(* Relicensing *)
+
+let find_copyright_year git file =
+  let err () = R.error_msgf "%a: can't find copyright year" Fpath.pp file in
+  let first_match l = match l with [] -> err () | h :: _ -> Ok h in
+  let parse_year m =
+    let is_year tok =
+      let year_char = function
+      | ',' | '-' -> true | c when Char.Ascii.is_digit c -> true | _ -> false
+      in
+      String.for_all year_char tok
+    in
+    let rec loop acc = function
+    | [] -> None
+    | ("Copyright" | "(c)") :: t :: ts when is_year t ->
+        loop (t :: acc) ts
+    | t :: ts when acc <> [] && is_year t -> loop (t :: acc) ts
+    | _ when acc <> [] -> Some (String.concat ~sep:" " (List.rev acc))
+    | t :: ts -> loop acc ts
+    in
+    loop [] (String.fields ~empty:false m)
+  in
+  let grep = Cmd.(git % "grep" % "-h" % "Copyright" % p file) in
+  OS.Cmd.(run_out grep |> out_lines)
+  >>= fun (lines, _) -> first_match lines
+  >>= fun m -> Ok (parse_year m)
+
+let get_content_as_flesh carcass bone file  =
+  let match_file = Cmd.(carcass % "match" % p file % bone) in
+  OS.Cmd.(run_out match_file |> out_string) >>= fun (flesh, (_, status)) ->
+  match status with
+  | `Exited 0 -> Ok flesh
+  | `Exited 1 -> R.error_msgf "%a: can't match content" Fpath.pp file
+  | st -> R.error_msgf "%a: %a" Fpath.pp file OS.Cmd.pp_status st
+
+let relicense_content carcass bone flesh year =
+  let year_var = match year with
+  | None -> Cmd.empty
+  | Some y -> Cmd.(v "copyright_year" % y)
+  in
+  let bone = Cmd.(carcass % "bone" % "--flesh" % "-" % bone %% year_var) in
+  OS.Cmd.(in_string flesh |> run_io bone |> to_string)
+
+let relicense_file_content git carcass bone file =
+  find_copyright_year git file
+  >>= fun year -> get_content_as_flesh carcass bone file
+  >>= fun flesh -> relicense_content carcass bone flesh year
+  >>= fun content -> Ok (year, content)
+
+let bone_for_file p = match Fpath.get_ext p with
+| ".mli" | ".ml" -> Some "ocaml/src"
+| ".h" | ".c" -> Some "c/src"
+| _ -> None
+
+let relicense_file git carcass file = match bone_for_file file with
+| None ->
+    Logs.warn (fun m -> m ~header:"SKIP" "%a: no bone for file" Fpath.pp file)
+| Some bone ->
+    begin
+      relicense_file_content git carcass bone file
+      >>= fun (year, content) -> OS.Path.Mode.get file
+      >>= fun mode -> OS.File.write ~mode file content
+      >>| fun () ->
+      Logs.app (fun m ->
+          m ~header:"DONE" "%a year is %a" Fpath.pp file pp_year_opt year)
+    end
+    |> Logs.on_error_msg ~use:(fun () -> ())
+
+let rec relicense git carcass = function
+| f :: fs ->
+    begin match Fpath.of_string f with
+    | Some file -> relicense_file git carcass file
+    | None -> Logs.err (fun m -> m "%a: can't parse file path" String.dump f)
+    end;
+    relicense git carcass fs
+| [] -> Ok ()
+
+let main () =
+  begin
+    OS.Cmd.must_exist (Cmd.v "carcass")
+    >>= fun carcass -> OS.Cmd.must_exist (Cmd.v "git")
+    >>= fun git -> git_is_tracked git
+    >>= fun () -> git_is_clean git
+    >>= fun () -> git_tracked_files git
+    >>= function
+    | [] -> Logs.app (fun m -> m "Nothing to relicense."); Ok ()
+    | files -> relicense git carcass files
+  end
+  |> Logs.on_error_msg ~use:(fun () -> ());
+  exit (Logs.err_count ())
+
+let () = main ()
