@@ -66,7 +66,7 @@ let relicense_content carcass bone flesh year =
   | Some y -> Cmd.(v "copyright_year" % y)
   in
   let bone = Cmd.(carcass % "bone" % "--flesh" % "-" % bone %% year_var) in
-  OS.Cmd.(in_string flesh |> run_io bone |> to_string)
+  OS.Cmd.(in_string flesh |> run_io bone |> to_string ~trim:false)
 
 let relicense_file_content git carcass bone file =
   find_copyright_year git file
@@ -96,8 +96,8 @@ let relicense_file git carcass file = match bone_for_file file with
 let rec relicense git carcass = function
 | f :: fs ->
     begin match Fpath.of_string f with
-    | Some file -> relicense_file git carcass file
-    | None -> Logs.err (fun m -> m "%a: can't parse file path" String.dump f)
+    | Ok file -> relicense_file git carcass file
+    | Error _ -> Logs.err (fun m -> m "%a: can't parse file path" String.dump f)
     end;
     relicense git carcass fs
 | [] -> Ok ()
