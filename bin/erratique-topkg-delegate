@@ -1,0 +1,78 @@
+#!/usr/bin/env ocaml
+#use "topfind"
+#require "bos.setup"
+open Bos_setup
+
+let unsupported = 1
+
+let version_num v = if String.is_prefix "v" v then String.drop ~max:1 v else v
+
+(* Erratique local WWW setup *)
+
+let www_root =
+  OS.Dir.user () >>| fun user -> Fpath.(user / "sync" / "erratique")
+
+let pkg_root www_root name = Fpath.(www_root / "maps" / "software" / name)
+
+(* Publish *)
+
+let pp_published name version artefact ppf loc =
+  Fmt.pf ppf "Published %s %a %a in %a" artefact
+    Fmt.(styled `Bold string) name
+    Fmt.(styled `Cyan string) version
+    Fmt.(styled `Green Fpath.pp) loc
+
+let publish_distrib name version archive =
+  let vnum = version_num version in
+  let cp src dst = Cmd.(v "cp" % p src % p dst) in
+  let get_timestamp = Cmd.(v "webglue" % "get" % "timestamp" % "utc") in
+  let set_version = Cmd.(v "webglue" % "set" % name % "s-last-version") in
+  let set_updated = Cmd.(v "webglue" % "set" % name % "s-updated") in
+  Fpath.of_string archive
+  >>= fun archive -> www_root
+  >>= fun www_root -> Ok (pkg_root www_root name)
+  >>= fun pkg_root -> Ok (Fpath.(pkg_root / "releases" / ""))
+  >>= fun releases -> OS.Cmd.run (cp archive releases)
+  >>= fun () -> OS.Dir.set_current www_root
+  >>= fun () -> OS.Cmd.(in_string vnum |> run_in set_version)
+  >>= fun () -> OS.Cmd.(run_out get_timestamp |> out_run_in)
+  >>= fun stamp -> OS.Cmd.(stamp |> run_in set_updated)
+  >>= fun () ->
+  Logs.app (fun m -> m "%a" (pp_published name version "distrib") releases);
+  Ok 0
+
+let publish_doc name version docdir =
+  let cp_dir src dst = Cmd.(v "cp" % "-R" % p src % p dst) in
+  Fpath.of_string docdir
+  >>= fun docdir -> www_root
+  >>= fun www_root -> Ok (Fpath.(pkg_root www_root name / "doc"))
+  >>= fun www_docdir -> OS.Dir.delete ~recurse:true www_docdir
+  >>= fun () -> OS.Cmd.run (cp_dir docdir www_docdir)
+  >>= fun () ->
+  Logs.app (fun m -> m "%a" (pp_published name version "doc of") www_docdir);
+  Ok 0
+
+(* Delegate *)
+
+let request = function
+| "publish" :: "distrib" :: uri :: name :: version :: msg :: archive :: _ ->
+    publish_distrib name version archive
+| "publish" :: "doc" :: uri :: name :: version :: msg :: docdir :: _ ->
+    publish_doc name version docdir
+| args ->
+    Ok unsupported
+
+let main () =
+  let doc = "topkg delegate for erratique.ch" in
+  begin match OS.Arg.(parse ~doc ~pos:string ()) with
+  | "ipc" :: verbosity :: req ->
+      Logs.level_of_string verbosity
+      >>= fun level -> Logs.set_level level; request req
+  | "ipc" :: [] ->
+      R.error_msg "malformed delegate request, verbosity is missing"
+  | args ->
+      R.error_msgf "unknown arguments: %s" (String.concat ~sep:" " args)
+  end
+  |> Logs.on_error_msg ~use:(fun () -> 2)
+
+let () = exit (main ())

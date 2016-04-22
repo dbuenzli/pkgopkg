@@ -16,6 +16,7 @@ bin:
   "bin/pkg-opam-pkg.sh" { "pkg-opam-pkg.sh" }
   "bin/pkg-opam-pkg" { "pkg-opam-pkg" }
   "bin/repo-make-public" { "repo-make-public" }
+  "bin/erratique-topkg-delegate" { "erratique-topkg-delegate" }
   "jsoo/jsoo-build" { "jsoo-build" }
   "bin/source2pdf" { "source2pdf" }
 ]
