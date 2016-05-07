@@ -31,7 +31,7 @@ let publish_distrib name version archive =
   Fpath.of_string archive
   >>= fun archive -> www_root
   >>= fun www_root -> Ok (pkg_root www_root name)
-  >>= fun pkg_root -> Ok (Fpath.(pkg_root / "releases" / ""))
+  >>= fun pkg_root -> Ok Fpath.(pkg_root / "releases" / "")
   >>= fun releases -> OS.Cmd.run (cp archive releases)
   >>= fun () -> OS.Dir.set_current www_root
   >>= fun () -> OS.Cmd.(in_string vnum |> run_in set_version)
@@ -45,7 +45,7 @@ let publish_doc name version docdir =
   let cp_dir src dst = Cmd.(v "cp" % "-R" % p src % p dst) in
   Fpath.of_string docdir
   >>= fun docdir -> www_root
-  >>= fun www_root -> Ok (Fpath.(pkg_root www_root name / "doc"))
+  >>= fun www_root -> Ok Fpath.(pkg_root www_root name / "doc")
   >>= fun www_docdir -> OS.Dir.delete ~recurse:true www_docdir
   >>= fun () -> OS.Cmd.run (cp_dir docdir www_docdir)
   >>= fun () ->
