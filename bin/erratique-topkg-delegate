@@ -52,6 +52,38 @@ let publish_doc name version docdir =
   Logs.app (fun m -> m "%a" (pp_published name version "doc of") www_docdir);
   Ok 0
 
+let publish_www_demos name version archive =
+  let demo_list root = OS.File.read_lines Fpath.(root / "pkg" / "demos") in
+  let build_demos root = Cmd.(v "topkg" % "build" % "-C" % p root %
+                              "--tests" % "true")
+  in
+  let tmpdir = Fpath.v "/tmp" in
+  let tmproot dir ar = Fpath.(dir // (rem_ext @@ base ar)) in
+  let cp_demo root name ~dst =
+    let cp src dst = Cmd.(v "cp" % p src % p dst) in
+    let demo n ext = Fpath.(root / "_build" / "test" / strf "%s.%s" n ext) in
+    OS.Cmd.run (cp (demo name "html") dst)
+    >>= fun () -> OS.Cmd.run (cp (demo name "js") dst)
+  in
+  let rec cp_demos root ~dst = function
+  | [] -> Ok ()
+  | d :: ds -> cp_demo root d ~dst >>= fun () -> cp_demos root ~dst ds
+  in
+  let untar dir archive = Cmd.(v "tar" % "-C" % p dir % "-xf" % p archive) in
+  Fpath.of_string archive
+  >>= fun archive -> OS.Cmd.run (untar tmpdir archive)
+  >>= fun () -> Ok (tmproot tmpdir archive)
+  >>= fun tmproot -> OS.Cmd.run (build_demos tmproot)
+  >>= fun () -> www_root
+  >>= fun www_root -> Ok Fpath.(pkg_root www_root name / "demos")
+  >>= fun www_demodir -> OS.Dir.delete ~recurse:true www_demodir
+  >>= fun () -> OS.Dir.create www_demodir
+  >>= fun _ -> demo_list tmproot
+  >>= fun demo_list -> cp_demos tmproot ~dst:www_demodir demo_list
+  >>= fun () ->
+  Logs.app (fun m -> m "%a" (pp_published name version "demos of") www_demodir);
+  Ok 0
+
 (* Delegate *)
 
 let request = function
@@ -59,6 +91,9 @@ let request = function
     publish_distrib name version archive
 | "publish" :: "doc" :: uri :: name :: version :: msg :: docdir :: _ ->
     publish_doc name version docdir
+| "publish" :: "alt" :: uri :: "www-demos" :: name :: version :: _ ::
+  archive :: _ ->
+    publish_www_demos name version archive
 | args ->
     Ok unsupported
 
