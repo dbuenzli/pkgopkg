@@ -14,30 +14,31 @@ ORIGINBASEURI="http://erratique.ch/repos"
 DEPLOYKEYNAME="erratique sync"
 EMAIL="daniel.buenzli@erratique.ch"
 GHUSER="dbuenzli"
+GHAUTH=$GHUSER:`cat $HOME/.github/b0-$GHUSER.token`
 
-if [ "$REPO" == "" ]; then 
+if [ "$REPO" == "" ]; then
     echo "You need to specify a repo as the first argument."
     exit 1
 fi
 
-if [ "$DESCRIPTION" == "" ]; then 
+if [ "$DESCRIPTION" == "" ]; then
     echo "You need to specify a description as the second argument."
     exit 1
 fi
 
 # We make a bare repo by cloning the original $REPO, remove it's remote
 # and copy it to $REMOTE_HOST:$REMOTE_REPO_DIR and addits description to cgit.
-# We then move the original $REPO to $REPO.old, remove the local bare and 
+# We then move the original $REPO to $REPO.old, remove the local bare and
 # clone back the remote repo through ssh.
 
 echo "Making remote bare repo."
 git clone --bare $REPO $REPO.git
 echo "$DESCRIPTION" > $REPO.git/description
-git --git-dir $REPO.git remote rm origin 
+git --git-dir $REPO.git remote rm origin
 scp -r $REPO.git $REMOTE_HOST:$REMOTE_REPO_DIR/
 ssh $REMOTE_HOST git --git-dir $REMOTE_REPO_DIR/$REPO.git update-server-info
 
-echo "Adding repo to cgit" 
+echo "Adding repo to cgit"
 ssh $REMOTE_HOST "cat <<EOF >> $REMOTE_REPO_DIR/cgitrc
 
 repo.url=$REPO
@@ -49,7 +50,7 @@ EOF"
 
 echo "Moving original repo to $REPO.old."
 mv $REPO $REPO.old
-rm -rf $REPO.git # that's the bare 
+rm -rf $REPO.git # that's the bare
 
 echo "Cloning back remote repo to $REPO through ssh."
 git clone $REMOTE_HOST:$REMOTE_REPO_DIR/$REPO.git
@@ -84,7 +85,7 @@ GH_CREATE=$(cat <<EOF
  "has_wiki":"false"}
 EOF
 )
-curl -u $GHUSER https://api.github.com/user/repos \
+curl -u $GHAUTH https://api.github.com/user/repos \
      -d "$GH_CREATE"
 
 echo "Adding deploy key to github repo. Authenticate again to github."
@@ -95,7 +96,7 @@ GH_DEPLOY_KEY=$(cat <<EOF
  "key":"$PUBKEY"}
 EOF
 )
-curl -u $GHUSER https://api.github.com/repos/$GHUSER/$REPO/keys \
+curl -u $GHAUTH https://api.github.com/repos/$GHUSER/$REPO/keys \
      -d "$GH_DEPLOY_KEY"
 
 # Add github remote as a mirror on the remote repo, add post-receive
@@ -107,11 +108,11 @@ ssh $REMOTE_HOST git --git-dir $REMOTE_REPO_DIR/$REPO.git remote add \
     --mirror=push github github_$REPO:$GHUSER/$REPO.git
 
 ssh $REMOTE_HOST git --git-dir $REMOTE_REPO_DIR/$REPO.git push \
-    -f --mirror github 
+    -f --mirror github
 
 echo "Installing post-receive hook for github syncing on remote repo."
 
-ssh $REMOTE_HOST "cat <<EOF > $REMOTE_REPO_DIR/$REPO.git/hooks/post-receive 
+ssh $REMOTE_HOST "cat <<EOF > $REMOTE_REPO_DIR/$REPO.git/hooks/post-receive
 #!/bin/sh
 git update-server-info
 git push -f --mirror --quiet github
@@ -122,8 +123,3 @@ ssh $REMOTE_HOST chmod +x $REMOTE_REPO_DIR/$REPO.git/hooks/post-receive
 echo "Finished."
 echo "Old repo is now '$REPO.old' don't forget to copy potentially"
 echo "ignored files to '$REPO'"
-
-
-
-
-
