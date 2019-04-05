@@ -70,6 +70,8 @@ if printf "\\\documentclass[a4paper]{article}\n\
    upquote=true,              			  \n\
    commentstyle=,				  \n\
    breaklines=true,			          \n\
+   literate={\x27\x22\x27}{\\\textquotesingle \x22\\\textquotesingle}3 \n\
+            {\x27\x5c\x5c\x22\x27}{\\\textquotesingle \\\textbackslash\x22\\\textquotesingle}4,\n\
    showstringspaces=false}			  \n\
    \\\begin{document}                             \n\
    \\\noindent{\\\Large\\\textbf{$TITLE}}         \n\
